@@ -20,3 +20,8 @@
     name: "klipper@{{ item.name }}"
     state: restarted
   loop: "{{ printers }}"
+
+- name: reboot pi
+  become: true
+  reboot:
+    post_reboot_delay: 30

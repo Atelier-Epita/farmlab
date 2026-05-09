@@ -22,6 +22,12 @@
     dest: "{{ install_dir }}/printer_data_{{ printer.name }}/config/{{ printer.name }}.cfg"
   register: cfg_name
 
+- name: Copy input-shaping.cfg for {{ printer.name }}
+  template:
+    src: input-shaping.cfg.j2
+    dest: "{{ install_dir }}/printer_data_{{ printer.name }}/config/input-shaping.cfg"
+  register: cfg_mainsail
+
 - name: Create printer.cfg for {{ printer.name }}
   copy:
     backup: yes
@@ -29,6 +35,7 @@
     content: |
       [include mainsail.cfg]
       [include macros.cfg]
+      [include input-shaping.cfg]
 
       [include {{ printer.model }}.cfg]
       [include {{ printer.name }}.cfg]

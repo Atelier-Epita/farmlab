@@ -1,0 +1,66 @@
+---
+- name: Install system dependencies for resonance measuring
+  become: true
+  apt:
+    name:
+      - python3-numpy
+      - python3-matplotlib
+      - libatlas-base-dev
+      - libopenblas-dev
+    state: present
+    update_cache: yes
+
+- name: Enable SPI in boot config
+  become: true
+  lineinfile:
+    path: /boot/config.txt
+    regexp: '^#?dtparam=spi=on'
+    line: 'dtparam=spi=on'
+    state: present
+  notify: reboot pi
+
+- name: Copy klipper-mcu systemd service template
+  become: true
+  copy:
+    src: "{{ install_dir }}/klipper/scripts/klipper-mcu.service"
+    dest: /etc/systemd/system/klipper-mcu.service
+    remote_src: true
+    mode: 0644
+  notify: reload systemd
+
+- name: Enable and start klipper-mcu service
+  become: true
+  systemd:
+    name: klipper-mcu
+    enabled: yes
+    state: started
+
+- name: Configure Klipper linux MCU compilation
+  copy:
+    backup: true
+    dest: "{{ install_dir }}/klipper/.config"
+    content: |
+      CONFIG_LOW_LEVEL_OPTIONS=y
+      CONFIG_MACH_LINUX=y
+  register: klipper_mcu_config
+
+- name: Stop klipper-mcu service before flashing
+  become: true
+  systemd:
+    name: klipper-mcu
+    state: stopped
+  when: klipper_mcu_config.changed
+
+- name: Build and install Klipper Linux MCU code
+  become: true
+  command: make flash
+  args:
+    chdir: "{{ install_dir }}/klipper"
+  when: klipper_mcu_config.changed
+
+- name: Start klipper-mcu service after flashing
+  become: true
+  systemd:
+    name: klipper-mcu
+    state: started
+  when: klipper_mcu_config.changed

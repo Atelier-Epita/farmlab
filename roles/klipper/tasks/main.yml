@@ -53,3 +53,5 @@
     enabled: yes
     state: started
   loop: "{{ printers }}"
+
+- include_tasks: ./input-shaping.yml
