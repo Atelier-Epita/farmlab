@@ -67,8 +67,10 @@ avrdude -patmega2560 -cwiring -P /dev/ttyUSB0 -F -Uflash:r:dump.hex:i
 ### How to flash klipper firmware on SWX1
 ```bash
 cd /home/pi/klipper
-make menuconfig
+make menuconfig # ATMega 2560 @ 16MHz
 make
 # Hold the reset button, and release it right after starting this command:
-avrdude -cwiring -patmega2560 -P/dev/ttyUSB0 -D -Uflash:w:out/klipper.elf.hex:i
+avrdude -cwiring -patmega2560 -P/dev/sidewinder_XXX -D -Uflash:w:out/klipper.elf.hex:i
 ```
+
+> You can find pictures of the wiring in `docs/wirings/sidewinder_x1/`
