@@ -16,7 +16,7 @@
     path: "{{ install_dir }}/printer_data_{{ item.0.name }}/{{ item.1 }}"
     state: directory
     mode: 0755
-  loop: "{{ printers | product(['config', 'logs', 'comms', 'gcodes']) | list }}"
+  loop: "{{ printers | product(['config', 'logs', 'comms', 'gcodes', 'config/.theme']) | list }}"
 
 - name: Create udev rules for printer
   become: true
