@@ -54,3 +54,12 @@
     cfg_model.changed or
     cfg_name.changed or
     cfg_printer.changed
+
+- name: Copy mainsail theme for {{ printer.name }}
+  copy:
+    src: "{{ item }}"
+    dest: "{{ install_dir }}/printer_data_{{ printer.name }}/config/.theme/{{ item }}"
+  loop:
+    - sidebar-logo.png
+    - favicon-32x32.png
+    - favicon-16x16.png
