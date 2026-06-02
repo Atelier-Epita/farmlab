@@ -18,3 +18,8 @@ all:
           usb_port: 1-1.2.4.2
           moonraker:
             port: 7127
+        - name: duplicator_1
+          model: wanhao_duplicator_12_300
+          usb_port: 1-1.2.4.1
+          moonraker:
+            port: 7127
