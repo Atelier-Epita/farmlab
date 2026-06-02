@@ -27,9 +27,7 @@ ansible-playbook -i inventory.yml main.yml --tags klipper_cfg
 ---
 
 # Slicer configs
-## SuperSlicer
-### Artillery Sidewinder X1
-> You can find the config in `docs/superslicer/SWX1.ini`
+> You can find the config in `docs/slicer_configs`
 
 ---
 
@@ -56,21 +54,32 @@ In Mainsail, go to "Heightmap", then "Calibrate"
 ---
 
 # Flashing firmware
-## Artillery Sidewinder X1
-### How to dump existing SWX1 firmware
+> You can find pictures of the wirings in `docs/wirings`
+## How to dump existing firmware
+### Wanhao Duplicator 12/300 (MKS Robin Nano v1.2)
+Not possible :)) (amazing STM32 Readout Protection)
+### Artillery Sidewinder X1 (MKS Gen L v1.0)
 Hold the reset button, and release it right after starting this command:
 ```bash
 avrdude -patmega2560 -cwiring -P /dev/ttyUSB0 -F -Uflash:r:dump.hex:i
 ```
 > You can find the stock firmware in `docs/firmware/sidewinder_x1/original.hex`
 
-### How to flash klipper firmware on SWX1
+## How to flash klipper firmware
+### Wanhao Duplicator 12/300 (MKS Robin Nano v1.2)
 ```bash
 cd /home/pi/klipper
-make menuconfig # ATMega 2560 @ 16MHz
+make menuconfig # Config reference in roles/klipper/templates/wanhao_duplicator_12_300.cfg.j2
+make
+./scripts/update_mks_robin.py out/klipper.bin out/Robin_nano35.bin
+# Copy to sd card, insert it in the printer, and power it on to flash
+```
+
+### Artillery Sidewinder X1 (MKS Gen L v1.0)
+```bash
+cd /home/pi/klipper
+make menuconfig # Config reference in roles/klipper/templates/artillery_sidewinder_x1.cfg.j2
 make
 # Hold the reset button, and release it right after starting this command:
 avrdude -cwiring -patmega2560 -P/dev/sidewinder_XXX -D -Uflash:w:out/klipper.elf.hex:i
 ```
-
-> You can find pictures of the wiring in `docs/wirings/sidewinder_x1/`
