@@ -9,8 +9,9 @@ enable_config_write_access: False
 
 [authorization]
 cors_domains:
-    {{ public_address }}
-    {{ local_address }}
+{% for domain in cors_domains %}
+    {{ domain }}
+{% endfor %}
 trusted_clients:
     10.0.0.0/8
     127.0.0.0/8

@@ -1,6 +1,8 @@
 ---
-public_address: "http://farmlab"
-local_address: "http://{{ inventory_hostname }}.local"
+cors_domains:
+  - "https://farmlab.lemaker.fr"
+  - "http://farmlab"
+  - "http://{{ inventory_hostname }}.local"
 
 system_user: pi
 install_dir: "/home/{{ system_user }}"
