@@ -47,9 +47,17 @@ Z_ENDSTOP_CALIBRATE
 BED_SCREWS_ADJUST 
 ```
 
-## 3. [Bed mesh (manual)](https://www.klipper3d.org/Bed_Mesh.html)
-First, make sure to pre-heat the bed
-In Mainsail, go to "Heightmap", then "Calibrate"
+## 3. [Bed mesh](https://www.klipper3d.org/Bed_Mesh.html)
+### 3.1. Without BLTouch
+
+First, make sure to pre-heat the bed. Then, in Mainsail, go to "Heightmap", then
+"Calibrate"
+
+### 3.2. With BLTouch
+
+The print start macro probes the bed automatically before printing, so **you do
+not need to calibrate or save a mesh manually**. The mesh is then used for that
+print, **but is not saved to the printer configuration**.
 
 ---
 
