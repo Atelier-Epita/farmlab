@@ -1,10 +1,9 @@
-ffmpeg:
-  hw: "-vf format=yuv420p -c:v h264_v4l2m2m"
+# https://github.com/AlexxIT/go2rtc/issues/641
 
 streams:
 {% for printer in printers %}
 {% if printer.usb.camera is defined %}
-  {{ printer.name }}: "ffmpeg:/dev/video_{{ printer.name }}#video=hw"
+  {{ printer.name }}: "ffmpeg:device?video=/dev/video_{{ printer.name }}&input_format=mjpeg&framerate=10&resolution=640x480#video=h264"
 {% endif %}
 {% endfor %}
 
@@ -17,3 +16,6 @@ webrtc:
 
 api:
   listen: "127.0.0.1:1984"
+
+log:
+  level: debug
