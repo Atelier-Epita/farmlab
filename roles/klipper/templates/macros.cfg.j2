@@ -171,6 +171,7 @@ gcode:
     M140 S{BED_TEMP}
     M104 S137
     G90                ; Use absolute coordinates
+    M83                ; Use relative extrusion
     G28                ; Home all axes
 
     G1 Z10 F3000       ; Clear bed clamps
