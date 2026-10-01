@@ -47,8 +47,8 @@ PRINT_START BED=[first_layer_bed_temperature] EXTRUDER=[first_layer_temperature]
 ```
 
 Other slicers may use different temperature placeholders. **You SHOULD remove
-their custom G-code commands**; `PRINT_START` handles everything.
-Without `PRINT_START`, the bed mesh routine is skipped.
+their custom G-code commands**; `PRINT_START` handles everything. Without
+`PRINT_START`, the bed mesh routine is skipped.
 
 ______________________________________________________________________
 
@@ -82,6 +82,13 @@ First, make sure to pre-heat the bed. Then, in Mainsail, go to "Heightmap", then
 The print start macro probes the bed automatically before printing, so **you do
 not need to calibrate or save a mesh manually**. The mesh is then used for that
 print, **but is not saved to the printer configuration**.
+
+If the nozzle is equally too low/high everywhere,
+[calibrate the probe Z offset](https://www.klipper3d.org/Probe_Calibrate.html#calibrating-probe-z-offset):
+preheat the bed, home, then run `PROBE_CALIBRATE`. Use the wizard and a sheet of
+paper. Then, copy the value of `z_offset` into the klipper config for this
+printer (`roles/klipper/templates/sidewinder_2.cfg.j2`), and deploy with
+Ansible.
 
 ______________________________________________________________________
 
