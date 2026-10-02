@@ -37,18 +37,9 @@ ______________________________________________________________________
 
 # Slicer configs
 
-> You can find configs in `docs/slicer_configs`
-
-Set the start G-code to call `PRINT_START` with the first-layer temperatures.
-For SuperSlicer/PrusaSlicer:
-
-```gcode
-PRINT_START BED=[first_layer_bed_temperature] EXTRUDER=[first_layer_temperature]
-```
-
-Other slicers may use different temperature placeholders. **You SHOULD remove
-their custom G-code commands**; `PRINT_START` handles everything. Without
-`PRINT_START`, the bed mesh routine is skipped.
+Import [farmlab_bundle.ini](docs/slicer_configs/superslicer/farmlab_bundle.ini)
+in SuperSlicer via **File -> Import -> Import Config Bundle**. Select matching
+`L'Atelier - ` printer, quality and filament presets, then export G-code.
 
 ______________________________________________________________________
 
