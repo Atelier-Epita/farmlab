@@ -1,6 +1,6 @@
 - name: Copy macros.cfg for {{ printer.name }}
   template:
-    src: macros.cfg.j2
+    src: "{{ printer.macros_template | default('macros.cfg.j2') }}"
     dest: "{{ install_dir }}/printer_data_{{ printer.name }}/config/macros.cfg"
   register: cfg_macros
 
@@ -34,7 +34,18 @@
       [include {{ printer.name }}.cfg]
 
       [mcu]
-      serial: /dev/{{ printer.name }}
+      serial: {{ (printer.mcu | default({})).serial | default('/dev/' ~ printer.name) }}
+      {% if (printer.mcu | default({})).restart_method is defined %}
+      restart_method: {{ printer.mcu.restart_method }}
+      {% endif %}
+      {% for name, mcu in (printer.extra_mcus | default({})).items() %}
+
+      [mcu {{ name }}]
+      serial: {{ mcu.serial }}
+      {% if mcu.restart_method is defined %}
+      restart_method: {{ mcu.restart_method }}
+      {% endif %}
+      {% endfor %}
 
       [save_variables]
       filename: ~/printer_data_{{ printer.name }}/config/variables.cfg

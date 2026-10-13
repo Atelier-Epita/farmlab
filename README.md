@@ -124,3 +124,38 @@ make
 # Hold the reset button, and release it right after starting this command:
 avrdude -cwiring -patmega2560 -P/dev/sidewinder_XXX -D -Uflash:w:out/klipper.elf.hex:i
 ```
+
+### Voron 0.2 (SKR Pico + Klipper Expander)
+
+```bash
+scp docs/firmware/voron_0_2/*.config farmlab:/home/pi/
+ssh farmlab
+cd /home/pi/klipper
+```
+
+For the SKR Pico, make sure the BOOT jumper is there and press RESET.
+
+```bash
+cp ~/SKR_PICO_V1.0.config .config
+make olddefconfig
+make clean
+make
+cp out/klipper.uf2 /media/pi/RPI-RP2/
+sync
+```
+
+Remove BOOT and press RESET.
+
+For the expander, fit its BOOT jumper and press RESET, then:
+
+```bash
+cp ~/STM32-Klipper-Expander.config .config
+make olddefconfig
+make clean
+make
+sudo dfu-util --list
+sudo dfu-util -d 0483:df11 -a 0 -s 0x08000000:leave -D out/klipper.bin
+```
+
+Check that `dfu-util --list` shows the expander as `0483:df11` before flashing.
+Remove BOOT and press RESET.

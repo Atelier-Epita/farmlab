@@ -1,4 +1,6 @@
+{% if item.usb.mcu is defined %}
 SUBSYSTEM=="tty", KERNELS=="{{ item.usb.mcu }}", SYMLINK+="{{ item.name }}"
+{% endif %}
 {% if item.usb.camera is defined %}
 SUBSYSTEM=="video4linux", KERNELS=="{{ item.usb.camera }}", ENV{ID_V4L_CAPABILITIES}=="*:capture:*", SYMLINK+="video_{{ item.name }}"
 {% endif %}

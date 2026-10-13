@@ -2,7 +2,7 @@
 
 streams:
 {% for printer in printers %}
-{% if printer.usb.camera is defined %}
+{% if printer.usb is defined and printer.usb.camera is defined %}
   {{ printer.name }}: "ffmpeg:device?video=/dev/video_{{ printer.name }}&input_format=mjpeg&framerate=10&resolution=640x480#video=h264"
 {% endif %}
 {% endfor %}

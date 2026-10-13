@@ -18,10 +18,6 @@
         - disable_service_worker.patch
         - multiple_hostnames.patch
 
-    - name: Install npm dependencies
-      npm:
-        path: "{{ mainsail_local_build_dir }}"
-
     - name: Prepare mainsail dependencies
       command: npm ci
       args:

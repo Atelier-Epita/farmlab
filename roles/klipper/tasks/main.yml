@@ -24,6 +24,7 @@
     src: udev-printer.rules.j2
     dest: "/etc/udev/rules.d/99-printer-{{ item.name }}.rules"
   loop: "{{ printers }}"
+  when: item.usb is defined and (item.usb.mcu is defined or item.usb.camera is defined)
   notify: reload udev
 
 - name: Copy systemd klipper service template
