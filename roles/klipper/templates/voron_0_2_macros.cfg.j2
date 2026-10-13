@@ -3,13 +3,16 @@
 gcode:
     {% set BED_TEMP = params.BED|default(60)|float %}
     {% set EXTRUDER_TEMP = params.EXTRUDER|default(190)|float %}
+    {% set CHAMBER_TEMP = params.CHAMBER|default(0)|float %}
     M140 S{BED_TEMP}
     G90
     M83
     G28
     G1 Z10 F3000
     M190 S{BED_TEMP}
-    G4 P600000
+    {% if CHAMBER_TEMP > 0 %}
+        TEMPERATURE_WAIT SENSOR="temperature_sensor chamber" MINIMUM={CHAMBER_TEMP}
+    {% endif %}
     M109 S{EXTRUDER_TEMP}
 
 [gcode_macro PRINT_END]
