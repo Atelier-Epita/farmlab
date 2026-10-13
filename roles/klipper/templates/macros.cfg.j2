@@ -166,6 +166,7 @@ gcode:
     {% raw %}
     {% set BED_TEMP = params.BED|default(params.BED_TEMP|default(60))|float %}
     {% set EXTRUDER_TEMP = params.EXTRUDER|default(params.EXTRUDER_TEMP|default(200))|float %}
+    {% set ABSOLUTE_EXTRUDE = printer.gcode_move.absolute_extrude %}
     {% endraw %}
 
     M140 S{BED_TEMP}
@@ -189,6 +190,13 @@ gcode:
     G1 X10.3 F5000
     G1 Y10 E10 F1200
     G92 E0
+    {% raw %}
+    {% if ABSOLUTE_EXTRUDE %}
+    M82                ; Restore slicer's absolute extrusion mode
+    {% else %}
+    M83                ; Restore slicer's relative extrusion mode
+    {% endif %}
+    {% endraw %}
 
 
 [gcode_macro START_PRINT]
