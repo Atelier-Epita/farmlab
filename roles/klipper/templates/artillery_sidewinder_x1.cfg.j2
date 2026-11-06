@@ -9,7 +9,8 @@ max_velocity: 500
 max_accel: 5000
 max_z_velocity: 50
 max_z_accel: 100
-square_corner_velocity: 5 
+square_corner_velocity: 0
+minimum_cruise_ratio: 0.8
 
 [stepper_x]
 step_pin: ar54
@@ -23,6 +24,7 @@ position_max: 310
 homing_speed: 40.0
 
 [stepper_y]
+step_pulse_duration: 0.000005
 step_pin: ar60
 dir_pin: ar61
 enable_pin: !ar56
