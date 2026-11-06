@@ -1,0 +1,11 @@
+---
+- name: Set remote printer theme
+  shell: >-
+    base64 -d | curl --fail --silent --show-error
+    -F root=config -F path=.theme
+    -F 'file=@-;filename={{ item.1 }};type=image/png'
+    http://{{ item.0.moonraker.host }}:{{ item.0.moonraker.port }}/server/files/upload
+  args:
+    stdin: "{{ lookup('pipe', 'base64 ' + role_path + '/../klipper/files/' + item.1) }}"
+  loop: "{{ printers | product(['sidebar-logo.png', 'favicon-32x32.png', 'favicon-16x16.png']) | list }}"
+  when: not (item.0.managed | default(true) | bool)
