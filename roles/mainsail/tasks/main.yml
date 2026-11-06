@@ -71,3 +71,34 @@
     dest: /etc/nginx/sites-enabled/mainsail
     state: link
   notify: reload nginx
+
+- name: Set Mainsail printer names
+  uri:
+    url: "http://{{ item.moonraker.host | default('127.0.0.1') }}:{{ item.moonraker.port }}/server/database/item"
+    method: POST
+    body_format: json
+    body:
+      namespace: mainsail
+      key: general.printername
+      value: "{{ item.display_name }}"
+  loop: "{{ printers }}"
+  changed_when: true
+  tags: ['mainsail_metadata']
+
+- name: Set remote printer cameras
+  uri:
+    url: "http://{{ item.moonraker.host }}:{{ item.moonraker.port }}/server/webcams/item"
+    method: POST
+    body_format: json
+    body:
+      name: "{{ item.name }}"
+      enabled: true
+      service: webrtc-go2rtc
+      stream_url: "/webcam/stream.html?src={{ item.name }}"
+      snapshot_url: "/webcam/api/frame.jpeg?src={{ item.name }}"
+  loop: "{{ printers }}"
+  when:
+    - item.camera is defined
+    - not (item.managed | default(true) | bool)
+  changed_when: true
+  tags: ['mainsail_metadata']
