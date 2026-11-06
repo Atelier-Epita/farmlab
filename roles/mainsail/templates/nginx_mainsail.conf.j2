@@ -43,6 +43,15 @@ server {
         proxy_read_timeout 86400;
     }
 
+{% if printer.remote_display | default(false) %}
+    location = /remote-display/{{ printer.name }}/websockify {
+        proxy_pass http://{{ printer.moonraker.host }}:5900/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+        proxy_read_timeout 86400;
+    }
+{% endif %}
 {% endfor %}
 
     location /webcam/ {

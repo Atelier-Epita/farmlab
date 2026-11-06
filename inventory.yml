@@ -63,6 +63,7 @@ all:
         - name: kobra_3
           display_name: "Anycubic Kobra 3 + ACE Pro"
           managed: false
+          remote_display: true
           rinkhals:
             mqtt_print_auto_leveling: true
             mqtt_print_vibration_compensation: true

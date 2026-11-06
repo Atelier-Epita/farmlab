@@ -1,0 +1,35 @@
+---
+- name: Create remote display assets directory
+  become: true
+  file:
+    path: "{{ mainsail_www_dir }}/remote-display"
+    state: directory
+    owner: "{{ system_user }}"
+    mode: '0755'
+
+- name: Copy bundled noVNC assets from Rinkhals
+  command: >-
+    adb -s {{ item.moonraker.host }}:5555 pull
+    /useremain/rinkhals/.current/home/rinkhals/apps/50-remote-display/novnc
+    {{ mainsail_www_dir }}/remote-display/{{ item.name }}
+  args:
+    creates: "{{ mainsail_www_dir }}/remote-display/{{ item.name }}/vnc.html"
+  loop: "{{ printers }}"
+  when: item.remote_display | default(false)
+
+- name: Set remote display sidebar link
+  uri:
+    url: "http://{{ item.moonraker.host }}:{{ item.moonraker.port }}/server/files/upload"
+    method: POST
+    status_code: [200, 201]
+    body_format: form-multipart
+    body:
+      root: config
+      path: .theme
+      file:
+        filename: navi.json
+        mime_type: application/json
+        content: >-
+          [{"title":"Printer screen","href":"/remote-display/{{ item.name }}/vnc.html?autoconnect=true&resize=scale&path=/remote-display/{{ item.name }}/websockify","target":"_blank","position":25}]
+  loop: "{{ printers }}"
+  when: item.remote_display | default(false)

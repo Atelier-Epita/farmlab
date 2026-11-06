@@ -102,3 +102,6 @@
     - not (item.managed | default(true) | bool)
   changed_when: true
   tags: ['mainsail_metadata']
+
+- name: Configure remote displays
+  import_tasks: remote_display.yml
