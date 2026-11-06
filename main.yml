@@ -11,6 +11,9 @@
     - role: moonraker
       tags: ['moonraker']
 
+    - role: rinkhals
+      tags: ['rinkhals']
+
     - role: mainsail
       tags: ['mainsail']
 

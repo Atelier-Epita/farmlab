@@ -10,3 +10,4 @@
     name: "moonraker@{{ item.name }}"
     state: restarted
   loop: "{{ printers }}"
+  when: item.managed | default(true) | bool

@@ -3,7 +3,7 @@
 {% for printer in printers %}
 upstream apiserver_{{ printer.name }} {
     ip_hash;
-    server 127.0.0.1:{{ printer.moonraker.port }};
+    server {{ printer.moonraker.host | default('127.0.0.1') }}:{{ printer.moonraker.port }};
 }
 
 {% endfor %}

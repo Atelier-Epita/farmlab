@@ -193,3 +193,16 @@ sudo dfu-util -d 0483:df11 -a 0 -s 0x08000000:leave -D out/klipper.bin
 
 Check that `dfu-util --list` shows the expander as `0483:df11` before flashing.
 Remove BOOT and press RESET.
+
+#### Anycubic Kobra 3 + ACE Pro (Rinkhals)
+
+[Rinkhals](https://github.com/rinkhals-community/Rinkhals) adds
+Moonraker/Mainsail while keeping Anycubic's printing software, touchscreen and
+calibration routines. You can see it as an overlay or a plugin to the stock
+Anycubic firmware.
+
+Follow the
+[USB installation guide](https://rinkhals-community.github.io/Rinkhals/guides/rinkhals-quick-start/)
+using the interactive installer for Kobra 3. Check firmware compatibility first,
+use **Tools -> Backup partitions**, and install only while the printer is idle.
+Enable LAN-only mode and make sure the Pi can reach the printer on Wi-Fi.

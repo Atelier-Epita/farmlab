@@ -1,0 +1,6 @@
+---
+- name: Configure Rinkhals printers
+  include_tasks: printer.yml
+  loop: "{{ printers | selectattr('rinkhals', 'defined') | list }}"
+  loop_control:
+    loop_var: printer

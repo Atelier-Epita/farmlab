@@ -16,6 +16,7 @@
     src: moonraker.conf.j2
     dest: "{{ install_dir }}/printer_data_{{ item.name }}/config/moonraker.conf"
   loop: "{{ printers }}"
+  when: item.managed | default(true) | bool
   notify: restart moonraker
 
 - name: Copy moonraker systemd service template
@@ -33,6 +34,7 @@
     enabled: yes
     state: started
   loop: "{{ printers }}"
+  when: item.managed | default(true) | bool
 
 - name: Apply moonraker polkit rules
   command: "{{ install_dir }}/moonraker/scripts/set-policykit-rules.sh --disable-systemctl"

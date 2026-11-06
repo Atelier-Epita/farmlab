@@ -1,0 +1,35 @@
+---
+- name: Install ADB client
+  become: true
+  apt:
+    name: adb
+    state: present
+
+- name: Connect to Rinkhals
+  command:
+    argv: [adb, connect, "{{ printer.moonraker.host }}:5555"]
+  register: rinkhals_connection
+  changed_when: false
+  failed_when: "'connected to ' not in rinkhals_connection.stdout"
+  check_mode: false
+
+- name: Configure Rinkhals Moonraker properties
+  command:
+    argv:
+      - adb
+      - -s
+      - "{{ printer.moonraker.host }}:5555"
+      - shell
+      - |
+        . /useremain/rinkhals/.current/tools.sh
+        {% for property, value in printer.rinkhals.items() %}
+        if [ "$(get_app_property 40-moonraker {{ property }})" != "{{ value | ternary('True', 'False') }}" ]; then
+        {% if not ansible_check_mode %}
+          set_app_property 40-moonraker {{ property }} {{ value | ternary('True', 'False') }} || exit 1
+        {% endif %}
+          echo 'updated {{ property }}'
+        fi
+        {% endfor %}
+  register: rinkhals_properties
+  changed_when: "'updated ' in rinkhals_properties.stdout"
+  check_mode: false

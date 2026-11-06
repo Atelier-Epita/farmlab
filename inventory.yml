@@ -61,3 +61,13 @@ all:
           camera: /dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2.3:1.0-video-index0
           moonraker:
             port: 7129
+        - name: kobra_3
+          display_name: "Anycubic Kobra 3 + ACE Pro"
+          managed: false
+          rinkhals:
+            mqtt_print_auto_leveling: true
+            mqtt_print_vibration_compensation: true
+            mqtt_print_flow_calibration: true
+          moonraker:
+            host: 10.69.3.162
+            port: 7125

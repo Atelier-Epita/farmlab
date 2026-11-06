@@ -17,6 +17,7 @@
     state: directory
     mode: 0755
   loop: "{{ printers | product(['config', 'logs', 'comms', 'gcodes', 'config/.theme']) | list }}"
+  when: item.0.managed | default(true) | bool
 
 - name: Copy systemd klipper service template
   become: true
@@ -37,6 +38,7 @@
   loop: "{{ printers }}"
   loop_control:
     loop_var: printer
+  when: printer.managed | default(true) | bool
   tags:
     - 'klipper_cfg'
 
@@ -47,3 +49,4 @@
     enabled: yes
     state: started
   loop: "{{ printers }}"
+  when: item.managed | default(true) | bool
