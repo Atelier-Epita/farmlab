@@ -19,7 +19,7 @@
         - multiple_hostnames.patch
 
     - name: Prepare mainsail dependencies
-      command: npm ci
+      command: npm install
       args:
         chdir: "{{ mainsail_local_build_dir }}"
 
