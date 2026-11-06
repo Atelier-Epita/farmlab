@@ -1,12 +1,74 @@
 # FarmLAB
 
-This repository contains all the configurations you need to manage the farm.
+## Printers
 
-## Using Ansible
+Open <https://farmlab.lemaker.fr>
+
+|             | Voron 0.2   | Artillery Sidewinder X1 | Wanhao Duplicator 12/300 |
+| ----------- | ----------- | ----------------------- | ------------------------ |
+| Reliability | Very good   | Bad                     | TODO                     |
+| Speed       | Very fast   | Slow                    | TODO                     |
+| Size (mm)   | 120x120x120 | 300x300x400             | 300x300x400              |
+
+### Slicer configs
+
+Import [farmlab_bundle.ini](docs/slicer_configs/superslicer/farmlab_bundle.ini)
+in SuperSlicer via **File -> Import -> Import Config Bundle**.
+
+Be careful to match the nozzle size (0.4mm usually).
+
+Upload to the matching printer in Mainsail and watch the first layer.
+
+### Materials
+
+| Filament   | Voron 0.2 | Artillery Sidewinder X1 | Anycubic Kobra 3 ACE | Anycubic Kobra 3 - External Spool | Wanhao Duplicator 12/300 |
+| ---------- | --------- | ----------------------- | -------------------- | --------------------------------- | ------------------------ |
+| PLA        | ✓         | ✓                       | ✓                    | ✓                                 | TODO                     |
+| PETG       | ✓         | ✓                       | ✓                    | ✓                                 | TODO                     |
+| ABS        | ✓         | ×                       | ×                    | ×                                 | TODO                     |
+| ASA        | ✓         | ×                       | ×                    | ×                                 | TODO                     |
+| PC         | ✓         | ×                       | ×                    | ×                                 | TODO                     |
+| PA (CoPA)  | ✓         | ×                       | ×                    | ×                                 | TODO                     |
+| TPU 95A    | ×         | ✓                       | ×\*\*                | ✓                                 | TODO                     |
+| TPC-91A    | ×         | ✓                       | ×\*\*                | ✓                                 | TODO                     |
+| PETG-CF/GF | ×         | ✓\*                     | ×                    | ✓\*                               | TODO                     |
+
+- \* Hardened 0.6/0.8mm nozzle required!
+- \*\* ACE does not support flexible filaments!
+
+______________________________________________________________________
+
+## Deploying
+
+### Roles Overview
+
+```mermaid
+flowchart LR
+    subgraph common["common (packages, permissions, tools)"]
+        mainsail["mainsail (web UI + nginx)"] --> moonraker["moonraker (printer API)"]
+        moonraker --> klipper["klipper (printer control)"]
+        mainsail --> go2rtc["go2rtc (cameras)"]
+    end
+```
+
+### Printer configs
+
+[inventory.yml](inventory.yml): names, USB paths, cameras and ports
+
+[roles/klipper/templates](roles/klipper/templates):
+
+| Printer                  | Shared model config               | Calibration                                 |
+| ------------------------ | --------------------------------- | ------------------------------------------- |
+| Artillery Sidewinder X1  | `artillery_sidewinder_x1.cfg.j2`  | `artillery_1.cfg.j2` / `artillery_2.cfg.j2` |
+| Voron 0.2                | `voron_0_2_skr_pico.cfg.j2`       | `voron_lucas.ladreyt.cfg.j2`                |
+| Wanhao Duplicator 12/300 | `wanhao_duplicator_12_300.cfg.j2` | `wanhao.cfg.j2`                             |
+
+Macros: `macros.cfg.j2`, or `voron_0_2_macros.cfg.j2` for Voron.
+
+**PLEASE! Keep calibration in the per-printer file, in this repo**
 
 ### SSH config
 
-This Ansible configuration make use of the ssh config file to connect to the pi.
 Make sure this block is present in your `~/.ssh/config`
 
 ```
@@ -20,112 +82,83 @@ Make sure you can ssh to the pi: `ssh farmlab`
 
 ### Deploy it!
 
-Whether you want to set up a fresh pi for farmlab, update its system, or change
-a printer's config, all you need is to run the main playbook:
+Make sure Ansible and npm are installed on your computer.
 
 ```bash
 ansible-playbook -i inventory.yml main.yml
 ```
 
-If you want to narrow down the scope of your tasks, you can use tags:
+For printer configs only:
 
 ```bash
 ansible-playbook -i inventory.yml main.yml --tags klipper_cfg
 ```
 
-______________________________________________________________________
+### Calibrating a printer
 
-# Slicer configs
+> run commands in the printer's console on <https://farmlab.lemaker.fr>
 
-Import [farmlab_bundle.ini](docs/slicer_configs/superslicer/farmlab_bundle.ini)
-in SuperSlicer via **File -> Import -> Import Config Bundle**. Select matching
-`L'Atelier - ` printer, quality and filament presets, then export G-code.
+[Ellis' tuning guide](https://ellis3dp.com/Print-Tuning-Guide/articles/index_tuning.html).
 
-______________________________________________________________________
+[PID calibration](https://www.klipper3d.org/Config_checks.html#calibrate-pid-settings):
 
-# Calibrating a printer
+Preheat the bed, home, then:
 
-https://ellis3dp.com/Print-Tuning-Guide/articles/index_tuning.html
+|               | Artillery Sidewinder X1 | Voron 0.2                           | Wanhao Duplicator 12/300            |
+| ------------- | ----------------------- | ----------------------------------- | ----------------------------------- |
+| Bed leveling  | `BED_SCREWS_ADJUST`     | `BED_SCREWS_ADJUST`                 | `BED_SCREWS_ADJUST`                 |
+| Z calibration | `PROBE_CALIBRATE`       | `Z_ENDSTOP_CALIBRATE` at bed center | `Z_ENDSTOP_CALIBRATE` at bed center |
+| Bed mesh      | Automatic\*             | No mesh                             | `BED_MESH_CALIBRATE METHOD=manual`  |
 
-## 1. [PID Calibration](https://www.klipper3d.org/Config_checks.html#calibrate-pid-settings)
+Use the wizard and a sheet of paper.
 
-```gcode
-PID_CALIBRATE HEATER=extruder TARGET=200
-PID_CALIBRATE HEATER=heater_bed TARGET=60
-```
+Copy the resulting PID values, `z_offset` (Artillery) or `position_endstop`
+(Voron/Wanhao) into the per-printer template, and deploy with Ansible. Move any
+`SAVE_CONFIG` overrides into git before deploying.
 
-## 2. [Bed leveling (manual)](https://www.klipper3d.org/Manual_Level.html)
+### Flashing firmware
 
-```gcode
-Z_ENDSTOP_CALIBRATE
-BED_SCREWS_ADJUST 
-```
+> you can find pictures of the wirings in `docs/wirings`
 
-## 3. [Bed mesh](https://www.klipper3d.org/Bed_Mesh.html)
-
-### 3.1. Without BLTouch
-
-First, make sure to pre-heat the bed. Then, in Mainsail, go to "Heightmap", then
-"Calibrate"
-
-### 3.2. With BLTouch
-
-The print start macro probes the bed automatically before printing, so **you do
-not need to calibrate or save a mesh manually**. The mesh is then used for that
-print, **but is not saved to the printer configuration**.
-
-If the nozzle is equally too low/high everywhere,
-[calibrate the probe Z offset](https://www.klipper3d.org/Probe_Calibrate.html#calibrating-probe-z-offset):
-preheat the bed, home, then run `PROBE_CALIBRATE`. Use the wizard and a sheet of
-paper. Then, copy the value of `z_offset` into the klipper config for this
-printer (`roles/klipper/templates/sidewinder_2.cfg.j2`), and deploy with
-Ansible.
-
-______________________________________________________________________
-
-# Flashing firmware
-
-> You can find pictures of the wirings in `docs/wirings`
-
-## How to dump existing firmware
-
-### Wanhao Duplicator 12/300 (MKS Robin Nano v1.2)
-
-Not possible :)) (amazing STM32 Readout Protection)
-
-### Artillery Sidewinder X1 (MKS Gen L v1.0)
-
-Hold the reset button, and release it right after starting this command:
-
-```bash
-avrdude -patmega2560 -cwiring -P /dev/ttyUSB0 -F -Uflash:r:dump.hex:i
-```
-
-> You can find the stock firmware in `docs/firmware/sidewinder_x1/original.hex`
-
-## How to flash klipper firmware
-
-### Wanhao Duplicator 12/300 (MKS Robin Nano v1.2)
+#### Artillery Sidewinder X1 (MKS Gen L v1.0)
 
 ```bash
 cd /home/pi/klipper
-make menuconfig # Config reference in roles/klipper/templates/wanhao_duplicator_12_300.cfg.j2
+make menuconfig # AVR, ATmega2560, 16MHz; see artillery_sidewinder_x1.cfg.j2
+make clean
+make
+```
+
+Set `FLASH_DEVICE` to that printer's `mcus.main` path from inventory.yml. Hold
+the reset button, and release it right after starting this command:
+
+```bash
+avrdude -cwiring -patmega2560 -P "$FLASH_DEVICE" -D -Uflash:w:out/klipper.elf.hex:i
+```
+
+To dump existing firmware instead:
+
+```bash
+avrdude -patmega2560 -cwiring -P "$FLASH_DEVICE" -Uflash:r:dump.hex:i
+```
+
+You can find the stock firmware in
+[original.hex](docs/firmware/artillery_sidewinder_x1/original.hex).
+
+#### Wanhao Duplicator 12/300 (MKS Robin Nano v1.2)
+
+Dumping existing firmware? Not possible :)) (amazing STM32 Readout Protection)
+
+```bash
+cd /home/pi/klipper
+make menuconfig # STM32F103, 8MHz crystal, 28KiB bootloader, serial USART3 PB11/PB10
+make clean
 make
 ./scripts/update_mks_robin.py out/klipper.bin out/Robin_nano35.bin
 # Copy to sd card, insert it in the printer, and power it on to flash
 ```
 
-### Artillery Sidewinder X1 (MKS Gen L v1.0)
-
-```bash
-cd /home/pi/klipper
-make menuconfig # Config reference in roles/klipper/templates/artillery_sidewinder_x1.cfg.j2
-make
-# Hold the reset button, and release it right after starting this command:
-avrdude -cwiring -patmega2560 -P/dev/sidewinder_XXX -D -Uflash:w:out/klipper.elf.hex:i
-```
-
-### Voron 0.2 (SKR Pico + Klipper Expander)
+#### Voron 0.2 (SKR Pico + Klipper Expander)
 
 ```bash
 scp docs/firmware/voron_0_2/*.config farmlab:/home/pi/
@@ -133,7 +166,8 @@ ssh farmlab
 cd /home/pi/klipper
 ```
 
-For the SKR Pico, make sure the BOOT jumper is there and press RESET.
+For the SKR Pico, make sure the BOOT jumper is there and press RESET. Mount the
+`RPI-RP2` drive if it does not appear automatically.
 
 ```bash
 cp ~/SKR_PICO_V1.0.config .config

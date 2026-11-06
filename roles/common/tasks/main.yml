@@ -14,7 +14,7 @@
     pkg:
       - git
       - unzip
-      - python3-virtualenv
+      - python3-venv
       - python3-dev
       - libffi-dev
       - build-essential
@@ -32,8 +32,6 @@
       - libusb-1.0-0
       - libusb-1.0-0-dev
       - pkg-config
-      - python3-virtualenv
-      - python3-dev
       - libopenjp2-7
       - libsodium-dev
       - zlib1g-dev
@@ -41,10 +39,7 @@
       - packagekit
       - wireless-tools
       - curl
-      - build-essential
       - nginx
-      - npm
-      - vite
     state: present
     update_cache: yes
     cache_valid_time: 86400

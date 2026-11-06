@@ -1,5 +1,5 @@
 ---
-- name: Build Mainsail on ***THIS*** host
+- name: Build Mainsail locally
   delegate_to: localhost
   block:
     - name: Clone mainsail repository
@@ -9,7 +9,7 @@
         version: "{{ mainsail_version }}"
         force: yes
 
-    - name: Apply patch hostname
+    - name: Apply Mainsail patches
       patch:
         src: "{{ item }}"
         basedir: "{{ mainsail_local_build_dir }}"
@@ -40,37 +40,29 @@
   unarchive:
     src: "{{ mainsail_local_build_dir }}/dist/mainsail.zip"
     dest: "{{ mainsail_www_dir }}"
-  notify: restart nginx
 
 - name: Copy Mainsail config.json
   template:
     src: config.json.j2
     dest: "{{ mainsail_www_dir }}/config.json"
-  notify: restart nginx
-
-- name: Copy nginx common vars for mainsail
-  become: true
-  template:
-    src: nginx_common_vars.conf.j2
-    dest: /etc/nginx/conf.d/common_vars.conf
-
-- name: Copy nginx upstreams for mainsail
-  become: true
-  template:
-    src: nginx_upstreams.conf.j2
-    dest: /etc/nginx/conf.d/upstreams.conf
 
 - name: Copy nginx config for mainsail
   become: true
   template:
-    src: nginx_mainsail.conf.j2
-    dest: /etc/nginx/sites-available/mainsail
+    src: "{{ item.src }}.j2"
+    dest: "/etc/nginx/{{ item.dest }}"
+  loop:
+    - { src: nginx_common_vars.conf, dest: conf.d/common_vars.conf }
+    - { src: nginx_upstreams.conf, dest: conf.d/upstreams.conf }
+    - { src: nginx_mainsail.conf, dest: sites-available/mainsail }
+  notify: reload nginx
 
 - name: Remove nginx default site
   become: true
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
+  notify: reload nginx
 
 - name: Link mainsail nginx config to enable sites
   become: true
@@ -78,4 +70,4 @@
     src: /etc/nginx/sites-available/mainsail
     dest: /etc/nginx/sites-enabled/mainsail
     state: link
-  notify: restart nginx
+  notify: reload nginx

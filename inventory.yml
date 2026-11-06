@@ -27,44 +27,37 @@ all:
 
   hosts:
     farmlab:
-      ansible_host: farmlab
       printers:
-        - name: sidewinder_1
+        - name: artillery_1
+          display_name: "Artillery Sidewinder X1 #1"
           model: artillery_sidewinder_x1
-          usb:
-            mcu: 1-1.2.4.4
-            camera: 1-1.2.3
+          mcus:
+            main: /dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2.4.4:1.0-port0
+          camera: /dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2.2:1.0-video-index0
           moonraker:
             port: 7125
-        - name: sidewinder_2
+        - name: artillery_2
+          display_name: "Artillery Sidewinder X1 #2"
           model: artillery_sidewinder_x1
-          usb:
-            mcu: 1-1.2.4.3
-            camera: 1-1.2.2
+          mcus:
+            main: /dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2.4.3:1.0-port0
+          camera: /dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2.1:1.0-video-index0
           moonraker:
             port: 7126
-        - name: sidewinder_3
-          model: artillery_sidewinder_x1
-          usb:
-            mcu: 1-1.2.4.2
-            camera: 1-1.2.1
-          moonraker:
-            port: 7127
-        - name: duplicator_1
+        - name: wanhao
+          display_name: "Wanhao Duplicator 12/300"
           model: wanhao_duplicator_12_300
-          usb:
-            mcu: 1-1.2.4.1
+          mcus:
+            main: /dev/serial/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2.4.1:1.0-port0
           moonraker:
             port: 7128
-        - name: voron_1
+        - name: voron_lucas.ladreyt
+          display_name: "Voron 0.2 (lucas.ladreyt)"
           model: voron_0_2_skr_pico
           macros_template: voron_0_2_macros.cfg.j2
-          mcu:
-            serial: /dev/serial/by-id/usb-Klipper_rp2040_4550357129107B88-if00
-            restart_method: command
-          extra_mcus:
-            expander:
-              serial: /dev/serial/by-id/usb-Klipper_stm32f042x6_020024001643305645303820-if00
-              restart_method: command
+          mcus:
+            main: /dev/serial/by-id/usb-Klipper_rp2040_4550357129107B88-if00
+            expander: /dev/serial/by-id/usb-Klipper_stm32f042x6_020024001643305645303820-if00
+          camera: /dev/v4l/by-path/platform-fd500000.pcie-pci-0000:01:00.0-usb-0:1.2.3:1.0-video-index0
           moonraker:
             port: 7129

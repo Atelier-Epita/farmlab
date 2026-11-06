@@ -9,7 +9,7 @@
   "instances": [
 {% for printer in printers %}
     {
-      "name": "{{ printer.name }}",
+      "name": {{ printer.display_name | to_json }},
       "hostname": null,
       "port": null,
       "path": "/{{ printer.name }}"

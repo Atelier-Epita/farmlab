@@ -1,0 +1,20 @@
+[include mainsail.cfg]
+[include macros.cfg]
+
+[include {{ printer.model }}.cfg]
+[include {{ printer.name }}.cfg]
+
+{% for name, serial in printer.mcus.items() %}
+[mcu{% if name != 'main' %} {{ name }}{% endif %}]
+serial: {{ serial }}
+
+{% endfor %}
+[save_variables]
+filename: ~/printer_data_{{ printer.name }}/config/variables.cfg
+
+##########################################
+# WARNING
+# Here lies klipper's SAVE_CONFIG
+# You *MUST* move the config overwrites in {{ printer.model }}.cfg in:
+# https://github.com/Atelier-Epita/farmlab
+##########################################
