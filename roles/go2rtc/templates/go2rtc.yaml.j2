@@ -3,7 +3,7 @@
 streams:
 {% for printer in printers %}
 {% if printer.camera is defined %}
-  {{ printer.name }}: "ffmpeg:device?video={{ printer.camera }}&input_format=mjpeg&framerate=10&resolution=640x480#video=h264"
+  {{ printer.name }}: "ffmpeg:device?video={{ printer.camera.feed }}&input_format=mjpeg&framerate=10&resolution=640x480#video=h264{% if printer.camera.rotation is defined %}#rotate={{ printer.camera.rotation }}{% endif %}"
 {% endif %}
 {% endfor %}
 
