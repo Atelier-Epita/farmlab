@@ -15,25 +15,34 @@ Open <https://farmlab.lemaker.fr>
 Import [farmlab_bundle.ini](docs/slicer_configs/superslicer/farmlab_bundle.ini)
 in SuperSlicer via **File -> Import -> Import Config Bundle**.
 
-Be careful to match the nozzle size (0.4mm usually).
+Use SuperSlicer **2.7.61.6** and select the matching machine, nozzle and
+**NORMAL <material>** print preset, then its filament preset. Stock printers
+usually have a 0.4mm brass nozzle.
+
+Those settings are from
+[Ellis's profiles](https://github.com/AndrewEllis93/Ellis-SuperSlicer-Profiles)
+and [tuning guide](https://ellis3dp.com/Print-Tuning-Guide/), with Kobra
+settings checked against
+[Anycubic's profiles](https://github.com/ANYCUBIC-3D/AnycubicSlicerNext/tree/main/resources/profiles/Anycubic).
 
 Upload to the matching printer in Mainsail and watch the first layer.
 
 ### Materials
 
-| Filament   | Voron 0.2 | Artillery Sidewinder X1 | Anycubic Kobra 3 ACE | Anycubic Kobra 3 - External Spool | Wanhao Duplicator 12/300 |
-| ---------- | --------- | ----------------------- | -------------------- | --------------------------------- | ------------------------ |
-| PLA        | ✓         | ✓                       | ✓                    | ✓                                 | TODO                     |
-| PETG       | ✓         | ✓                       | ✓                    | ✓                                 | TODO                     |
-| ABS        | ✓         | ×                       | ×                    | ×                                 | TODO                     |
-| ASA        | ✓         | ×                       | ×                    | ×                                 | TODO                     |
-| PC         | ✓         | ×                       | ×                    | ×                                 | TODO                     |
-| PA (CoPA)  | ✓         | ×                       | ×                    | ×                                 | TODO                     |
-| TPU 95A    | ×         | ✓                       | ×\*\*                | ✓                                 | TODO                     |
-| TPC-91A    | ×         | ✓                       | ×\*\*                | ✓                                 | TODO                     |
-| PETG-CF/GF | ×         | ✓\*                     | ×                    | ✓\*                               | TODO                     |
+| Filament     | Voron 0.2 | Artillery Sidewinder X1 | Anycubic Kobra 3 ACE | Anycubic Kobra 3 - External Spool | Wanhao Duplicator 12/300 |
+| ------------ | --------- | ----------------------- | -------------------- | --------------------------------- | ------------------------ |
+| PLA          | ✓         | ✓                       | ✓                    | ✓                                 | ✓                        |
+| PETG         | ✓         | ✓                       | ✓                    | ✓                                 | ✓                        |
+| ABS          | ✓         | ×                       | ×                    | ×                                 | ×                        |
+| ASA          | ✓         | ×                       | ×                    | ×                                 | ×                        |
+| PC           | ✓         | ×                       | ×                    | ×                                 | ×                        |
+| PA (CoPA)    | ✓         | ×                       | ×                    | ×                                 | ×                        |
+| TPU 95A      | ×         | ✓                       | ×\*\*                | ✓                                 | ×                        |
+| TPC-91A      | ×         | ×                       | ×\*\*                | ✓                                 | ×                        |
+| PETG-CF/GF\* | ×         | ×                       | ×                    | ×                                 | ×                        |
 
-- \* Hardened 0.6/0.8mm nozzle required!
+- \* Abrasive filaments require hardened nozzles (ask before printing) and have
+  no stock-hardware presets.
 - \*\* ACE does not support flexible filaments!
 
 ______________________________________________________________________
