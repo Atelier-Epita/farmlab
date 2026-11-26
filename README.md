@@ -2,20 +2,15 @@
 
 ## Printers
 
-Open <https://farmlab.lemaker.fr>
-
-|             | Voron 0.2   | Artillery Sidewinder X1 | Wanhao Duplicator 12/300 |
-| ----------- | ----------- | ----------------------- | ------------------------ |
-| Reliability | Very good   | Bad                     | TODO                     |
-| Speed       | Very fast   | Slow                    | TODO                     |
-| Size (mm)   | 120x120x120 | 300x300x400             | 300x300x400              |
+Open the [FarmLAB dashboard](https://farmlab.lemaker.fr). For a first print,
+pick an idle printer loaded with filament, and use its slicer preset in SuperSlicer (see below).
 
 ### Slicer configs
 
 Import [farmlab_bundle.ini](docs/slicer_configs/superslicer/farmlab_bundle.ini)
 in SuperSlicer via **File -> Import -> Import Config Bundle**.
 
-Use SuperSlicer **2.7.61.6** and select the matching machine, nozzle and
+Use SuperSlicer (>=2.7.61.6) and select the matching machine, nozzle and
 **NORMAL <material>** print preset, then its filament preset. Stock printers
 usually have a 0.4mm brass nozzle.
 
